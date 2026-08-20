@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+  <title>South Coast Pickleball Leisure Hub — Open Play in Santa Maria, Davao Occidental</title>
+  <meta name="description" content="Book open play or court rental at South Coast Pickleball Leisure Hub, Poblacion, Santa Maria, Davao Occidental. Open Play ₱100, Court Booking ₱250/hr, 6PM–12AM." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&family=Dancing+Script:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="./image-slot.js"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SportsActivityLocation","name":"South Coast Pickleball Leisure Hub","address":{"@type":"PostalAddress","streetAddress":"Jassie Street, Poblacion","addressLocality":"Santa Maria","addressRegion":"Davao Occidental","addressCountry":"PH"},"telephone":"+639094716666","openingHours":"Mo-Su 18:00-24:00","priceRange":"₱100-₱250"}
+  </script>
+  <style>
+    body { margin: 0; }
+    @keyframes floatBall { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-14px) rotate(12deg); } }
+    a { color: #FF3D9A; text-decoration: none; }
+    a:hover { color: #ffffff; }
+  </style>
+</helmet>
+
+<div style="background:#3D1554; font-family:'Inter',sans-serif; color:#fff; overflow-x:hidden;">
+
+  <!-- NAV -->
+  <div style="position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; padding:16px 32px; background:rgba(61,21,84,0.85); backdrop-filter:blur(10px); border-bottom:1px solid rgba(255,255,255,0.08);">
+    <div style="font-family:'Dancing Script',cursive; font-size:26px; font-weight:700; color:#fff;">South Coast</div>
+    <div style="display:flex; align-items:center; gap:28px;" data-nav-links>
+      <a href="#booking" style="font-size:14px; font-weight:600; color:#EADDF5;">Booking</a>
+      <a href="#about" style="font-size:14px; font-weight:600; color:#EADDF5;">The Hub</a>
+      <a href="#location" style="font-size:14px; font-weight:600; color:#EADDF5;">Location</a>
+      <a href="#contact" style="font-size:14px; font-weight:600; color:#EADDF5;">Contact</a>
+      <a href="#booking" style="background:linear-gradient(135deg,#FF3D9A,#EC2D8F); color:#fff; padding:10px 22px; border-radius:999px; font-weight:700; font-size:14px; box-shadow:0 6px 20px rgba(236,45,143,0.5);">Book Now</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div style="position:relative; min-height:92vh; display:flex; align-items:center; background:linear-gradient(150deg,#3D1554 0%, #5B2A86 45%, #B4308F 100%);">
+    <div style="position:absolute; inset:0; opacity:0.9;">
+      <image-slot id="hero-bg" shape="rect" placeholder="Drop hero court photo (palms + purple court)" fit="cover" style="width:100%; height:100%; opacity:0.35;"></image-slot>
+    </div>
+    <div style="position:relative; z-index:2; max-width:1200px; margin:0 auto; padding:80px 32px; display:grid; grid-template-columns:1.1fr 0.9fr; gap:48px; align-items:center; width:100%;">
+      <div>
+        <div style="font-family:'Dancing Script',cursive; font-size:64px; line-height:1; color:#fff; text-shadow:0 4px 24px rgba(0,0,0,0.35);">South Coast</div>
+        <div style="font-family:'Poppins',sans-serif; font-weight:900; font-size:64px; line-height:1.02; text-transform:uppercase; letter-spacing:1px; margin-top:6px;">Pickleball</div>
+        <div style="font-family:'Poppins',sans-serif; font-weight:800; font-size:26px; letter-spacing:6px; color:#FF7FC0; margin-top:6px;">LEISURE HUB</div>
+        <div style="font-family:'Dancing Script',cursive; font-size:32px; color:#C6D600; margin-top:22px;">See you on the court!</div>
+        <div style="display:flex; gap:16px; margin-top:36px; flex-wrap:wrap;">
+          <a href="#booking" style="background:linear-gradient(135deg,#FF3D9A,#EC2D8F); color:#fff; padding:16px 32px; border-radius:999px; font-weight:800; font-size:16px; box-shadow:0 10px 30px rgba(236,45,143,0.55);">Book a Court</a>
+          <a href="tel:+639094716666" style="background:rgba(255,255,255,0.12); border:2px solid rgba(255,255,255,0.5); color:#fff; padding:16px 32px; border-radius:999px; font-weight:800; font-size:16px;">Call 0909 471 6666</a>
+        </div>
+      </div>
+      <div style="position:relative; aspect-ratio:4/5; border-radius:28px; overflow:hidden; box-shadow:0 30px 70px rgba(0,0,0,0.4); border:4px solid rgba(255,255,255,0.15);">
+        <image-slot id="hero-main" shape="rect" placeholder="Drop court + palms hero photo" fit="cover" style="width:100%; height:100%;"></image-slot>
+        <div style="position:absolute; top:20px; right:20px; font-size:44px; animation:floatBall 3.5s ease-in-out infinite; pointer-events:none;">🥒</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPEN PLAY BANNER -->
+  <div style="background:linear-gradient(90deg,#4A1B6D,#7A2E9E); padding:36px 24px; border-top:1px solid rgba(255,255,255,0.1); border-bottom:1px solid rgba(255,255,255,0.1);">
+    <div style="max-width:1100px; margin:0 auto; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:28px;">
+      <div style="background:linear-gradient(135deg,#FF3D9A,#EC2D8F); padding:10px 28px; border-radius:14px; font-family:'Poppins',sans-serif; font-weight:900; font-size:28px; text-transform:uppercase; letter-spacing:1px; box-shadow:0 8px 24px rgba(236,45,143,0.4);">Open Play</div>
+      <div style="display:flex; gap:28px; flex-wrap:wrap; align-items:center; justify-content:center;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:40px; height:40px; border-radius:50%; background:rgba(236,45,143,0.25); border:2px solid #FF7FC0; display:flex; align-items:center; justify-content:center; font-size:18px;">⏰</div>
+          <div style="font-weight:700; font-size:18px;">6 PM – 12 AM</div>
+        </div>
+        <div style="width:1px; height:28px; background:rgba(255,255,255,0.25);"></div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:40px; height:40px; border-radius:50%; background:rgba(236,45,143,0.25); border:2px solid #FF7FC0; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800;">₱</div>
+          <div style="font-weight:700; font-size:18px;">₱{{ openPlayPrice }} only</div>
+        </div>
+        <div style="width:1px; height:28px; background:rgba(255,255,255,0.25);"></div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:40px; height:40px; border-radius:50%; background:rgba(236,45,143,0.25); border:2px solid #FF7FC0; display:flex; align-items:center; justify-content:center; font-size:16px;">✓</div>
+          <div style="font-weight:700; font-size:16px; color:#EADDF5;">Limited — for players only</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOOKING -->
+  <div id="booking" style="max-width:1100px; margin:0 auto; padding:100px 32px 80px;">
+    <div style="text-align:center; margin-bottom:48px;">
+      <div style="font-family:'Poppins',sans-serif; font-weight:900; font-size:40px; text-transform:uppercase; letter-spacing:1px;">Book Your Slot</div>
+      <div style="color:#D8BFE8; font-size:17px; margin-top:10px;">Manual booking or online booking — pick what works for you.</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start;">
+      <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:24px; padding:32px;">
+        <div style="display:flex; gap:10px; margin-bottom:24px;">
+          <button onClick="{{ setTypeOpenPlay }}" style="{{ tabOpenPlayStyle }}">Open Play · ₱{{ openPlayPrice }}/player</button>
+          <button onClick="{{ setTypeCourt }}" style="{{ tabCourtStyle }}">Court Booking · ₱{{ courtPrice }}/hr</button>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <input placeholder="Full name" value="{{ form.name }}" onChange="{{ onName }}" style="{{ inputStyle }}" />
+          <input placeholder="Phone number" value="{{ form.phone }}" onChange="{{ onPhone }}" style="{{ inputStyle }}" />
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <input type="date" value="{{ form.date }}" onChange="{{ onDate }}" style="{{ inputStyle }}" />
+            <select value="{{ form.timeSlot }}" onChange="{{ onTimeSlot }}" style="{{ inputStyle }}">
+              <sc-for list="{{ timeSlots }}" as="slot" hint-placeholder-count="6">
+                <option value="{{ slot }}">{{ slot }}</option>
+              </sc-for>
+            </select>
+          </div>
+          <sc-if value="{{ isCourt }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <label style="font-size:13px; color:#D8BFE8; display:block; margin-bottom:6px;">Hours needed</label>
+              <input type="number" min="1" max="6" value="{{ form.hours }}" onChange="{{ onHours }}" style="{{ inputStyle }}" />
+            </div>
+          </sc-if>
+          <sc-if value="{{ isOpenPlay }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <label style="font-size:13px; color:#D8BFE8; display:block; margin-bottom:6px;">Number of players</label>
+              <input type="number" min="1" max="12" value="{{ form.players }}" onChange="{{ onPlayers }}" style="{{ inputStyle }}" />
+            </div>
+          </sc-if>
+
+          <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(198,214,0,0.1); border:1px solid rgba(198,214,0,0.4); border-radius:14px; padding:16px 20px; margin-top:8px;">
+            <div style="font-size:14px; color:#EADDF5;">Estimated total</div>
+            <div style="font-family:'Poppins',sans-serif; font-weight:800; font-size:24px; color:#C6D600;">₱{{ total }}</div>
+          </div>
+
+          <div>
+            <label style="font-size:13px; color:#D8BFE8; display:block; margin-bottom:6px;">Payment method</label>
+            <div style="display:flex; gap:10px;">
+              <button onClick="{{ onPayOnsite }}" style="{{ tabPayOnsiteStyle }}">Pay On-Site</button>
+              <button onClick="{{ onPayGcash }}" style="{{ tabPayGcashStyle }}">Pay via GCash</button>
+            </div>
+          </div>
+
+          <sc-if value="{{ isGcash }}" hint-placeholder-val="{{ false }}">
+            <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:14px;">
+              <div>
+                <div style="font-size:13px; color:#D8BFE8;">Send payment to</div>
+                <div style="font-family:'Poppins',sans-serif; font-weight:800; font-size:20px; color:#C6D600; margin-top:2px;">{{ gcashNumber }}</div>
+                <div style="font-size:13px; color:#EADDF5;">{{ gcashName }}</div>
+              </div>
+              <div style="width:150px; aspect-ratio:1/1; border-radius:14px; overflow:hidden; background:#fff;">
+                <image-slot id="gcash-qr" shape="rect" placeholder="Drop GCash QR code" fit="contain" style="width:100%; height:100%;"></image-slot>
+              </div>
+              <div>
+                <label style="font-size:13px; color:#D8BFE8; display:block; margin-bottom:6px;">GCash reference number</label>
+                <input placeholder="e.g. 1234 5678 9012" value="{{ form.gcashRef }}" onChange="{{ onGcashRef }}" style="{{ inputStyle }}" />
+              </div>
+              <div>
+                <label style="font-size:13px; color:#D8BFE8; display:block; margin-bottom:6px;">Upload a screenshot of your GCash receipt</label>
+                <input type="file" accept="image/*" onChange="{{ onReceiptChange }}" style="{{ inputStyle }}" />
+                <sc-if value="{{ receiptError }}" hint-placeholder-val="{{ false }}">
+                  <div style="color:#FF7FC0; font-size:12px; margin-top:6px;">{{ receiptError }}</div>
+                </sc-if>
+                <sc-if value="{{ receiptDataUrl }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:10px; display:flex; align-items:center; gap:12px;">
+                    <img src="{{ receiptDataUrl }}" style="width:56px; height:56px; object-fit:cover; border-radius:10px; border:1px solid rgba(255,255,255,0.25);" />
+                    <div style="font-size:12px; color:#D8BFE8; flex:1;">{{ receiptName }}</div>
+                    <button onClick="{{ onClearReceipt }}" style="background:none; border:1px solid rgba(255,255,255,0.3); color:#EADDF5; border-radius:999px; padding:6px 14px; font-size:12px; cursor:pointer;">Remove</button>
+                  </div>
+                </sc-if>
+              </div>
+              <div style="font-size:12px; color:#B39BC8; line-height:1.5;">This page can't attach files to the Facebook link automatically — after tapping Send Request, please also drop this same screenshot into the chat so we can confirm your GCash payment.</div>
+            </div>
+          </sc-if>
+
+          <a href="{{ facebookMessageHref }}" target="_blank" style="{{ sendBtnStyle }}">Send Request · Message on Facebook</a>
+          <a href="tel:+639094716666" style="text-align:center; background:rgba(255,255,255,0.1); border:2px solid rgba(255,255,255,0.4); color:#fff; padding:14px; border-radius:999px; font-weight:700; font-size:15px;">Or call 0909 471 6666</a>
+
+          <div style="font-size:12px; color:#B39BC8; line-height:1.5; margin-top:6px;">We collect your name, phone, and requested slot only to confirm your booking — never shared with third parties. Pay on-site in cash, or pay via GCash and share your receipt so we can confirm.</div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:20px; padding:26px;">
+          <div style="font-family:'Poppins',sans-serif; font-weight:800; font-size:18px; margin-bottom:8px;">Open Play</div>
+          <div style="color:#D8BFE8; font-size:14px; line-height:1.6;">₱{{ openPlayPrice }} per player · 6 PM – 12 AM · limited slots, players only.</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:20px; padding:26px;">
+          <div style="font-family:'Poppins',sans-serif; font-weight:800; font-size:18px; margin-bottom:8px;">Court Booking</div>
+          <div style="color:#D8BFE8; font-size:14px; line-height:1.6;">₱{{ courtPrice }} per hour · rent the whole court for your group.</div>
+        </div>
+        <div style="aspect-ratio:16/10; border-radius:20px; overflow:hidden;">
+          <image-slot id="booking-photo" shape="rect" placeholder="Drop a court action photo" fit="cover" style="width:100%; height:100%;"></image-slot>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div id="about" style="max-width:1100px; margin:0 auto; padding:60px 32px 100px; display:grid; grid-template-columns:0.9fr 1.1fr; gap:56px; align-items:center;">
+    <div style="aspect-ratio:1/1; border-radius:24px; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.35);">
+      <image-slot id="about-photo" shape="rect" placeholder="Drop a photo of the purple/lilac court" fit="cover" style="width:100%; height:100%;"></image-slot>
+    </div>
+    <div>
+      <div style="font-family:'Poppins',sans-serif; font-weight:900; font-size:34px; text-transform:uppercase; letter-spacing:0.5px;">The Hub</div>
+      <div style="color:#EADDF5; font-size:17px; line-height:1.8; margin-top:16px;">
+        Tucked along Jassie Street in Poblacion, Santa Maria — the road going to Boracay — South Coast Pickleball Leisure Hub turned a former banana chips warehouse into the region's liveliest court. Palms sway courtside, the surface runs purple-to-lilac under the lights, and open play runs every night from 6 PM to midnight. Energetic, tropical, and welcoming: beach-leisure meets serious play.
+      </div>
+    </div>
+  </div>
+
+  <!-- PARTNERS -->
+  <div style="background:#fff; padding:56px 32px;">
+    <div style="max-width:1100px; margin:0 auto; text-align:center;">
+      <div style="color:#8A5FA8; font-weight:700; font-size:13px; letter-spacing:3px; text-transform:uppercase; margin-bottom:28px;">Courtside Partner Brands</div>
+      <div style="display:flex; flex-wrap:wrap; gap:20px; justify-content:center; align-items:center;">
+        <sc-for list="{{ partners }}" as="p" hint-placeholder-count="4">
+          <div style="padding:16px 32px; border-radius:14px; background:#F5EEFB; color:#4A1B6D; font-family:'Poppins',sans-serif; font-weight:800; font-size:20px; letter-spacing:0.5px;">{{ p }}</div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOCATION -->
+  <div id="location" style="background:linear-gradient(150deg,#3D1554,#5B2A86); padding:90px 32px;">
+    <div style="max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center;">
+      <div>
+        <div style="font-family:'Poppins',sans-serif; font-weight:900; font-size:34px; text-transform:uppercase; letter-spacing:0.5px;">Find Us</div>
+        <div style="color:#EADDF5; font-size:17px; line-height:1.8; margin-top:16px;">
+          Poblacion, Santa Maria, Davao Occidental<br/>
+          Jassie Street — along the street going to Boracay<br/>
+          <span style="color:#C6D600;">Previously the Banana Chips Warehouse</span>
+        </div>
+        <a href="https://www.google.com/maps/search/?api=1&query=Poblacion+Santa+Maria+Davao+Occidental+Jassie+Street" target="_blank" style="display:inline-block; margin-top:24px; background:linear-gradient(135deg,#FF3D9A,#EC2D8F); color:#fff; padding:14px 28px; border-radius:999px; font-weight:700; font-size:15px;">Open in Google Maps</a>
+      </div>
+      <div style="border-radius:20px; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.35); height:340px;">
+        <iframe title="Map to South Coast Pickleball Leisure Hub" src="https://www.google.com/maps?q=Poblacion,Santa+Maria,Davao+Occidental,Philippines&z={{ mapZoom }}&output=embed" style="width:100%; height:100%; border:0;" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div id="contact" style="background:#2C0F41; padding:56px 32px 32px;">
+    <div style="max-width:1100px; margin:0 auto; display:flex; flex-wrap:wrap; justify-content:space-between; gap:32px;">
+      <div>
+        <div style="font-family:'Dancing Script',cursive; font-size:28px; margin-bottom:10px;">South Coast Pickleball</div>
+        <div style="color:#B39BC8; font-size:14px; line-height:1.7;">Poblacion, Santa Maria, Davao Occidental<br/>Jassie Street, Philippines</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <a href="tel:+639094716666" style="color:#EADDF5; font-size:14px; font-weight:600;">📞 0909 471 6666</a>
+        <a href="https://facebook.com/SouthCoastPickleballLeisureHub" target="_blank" style="color:#EADDF5; font-size:14px; font-weight:600;">facebook.com/SouthCoastPickleballLeisureHub</a>
+        <div style="color:#B39BC8; font-size:14px;">Open Play daily · 6 PM – 12 AM</div>
+      </div>
+    </div>
+    <div style="max-width:1100px; margin:32px auto 0; padding-top:20px; border-top:1px solid rgba(255,255,255,0.1); color:#8A6E9E; font-size:13px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+      <div>© 2026 South Coast Pickleball Leisure Hub. See you on the court!</div>
+      <div>All bookings subject to on-site confirmation.</div>
+    </div>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;openPlayPrice&quot;: {&quot;editor&quot;: &quot;int&quot;, &quot;default&quot;: 100, &quot;tsType&quot;: &quot;number&quot;, &quot;min&quot;: 50, &quot;max&quot;: 500, &quot;unit&quot;: &quot;₱&quot;, &quot;section&quot;: &quot;Rates&quot;}, &quot;courtPrice&quot;: {&quot;editor&quot;: &quot;int&quot;, &quot;default&quot;: 250, &quot;tsType&quot;: &quot;number&quot;, &quot;min&quot;: 100, &quot;max&quot;: 1000, &quot;unit&quot;: &quot;₱&quot;, &quot;section&quot;: &quot;Rates&quot;}, &quot;mapZoom&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 15, &quot;tsType&quot;: &quot;number&quot;, &quot;min&quot;: 10, &quot;max&quot;: 18, &quot;section&quot;: &quot;Map&quot;}}">
+
+class Component extends DCLogic {
+  state = {
+    bookingType: 'openplay',
+    paymentMethod: 'onsite',
+    form: { name: '', phone: '', date: '', timeSlot: '6:00 PM', hours: 1, players: 1, gcashRef: '' },
+    receiptDataUrl: null,
+    receiptName: '',
+    receiptError: ''
+  };
+
+  setField(key, value) {
+    this.setState(s => ({ form: { ...s.form, [key]: value } }));
+  }
+
+  onReceiptChange(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (!/^image\//.test(file.type)) {
+      this.setState({ receiptError: 'Please upload an image file (a screenshot of your GCash receipt).' });
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.setState({ receiptDataUrl: reader.result, receiptName: file.name, receiptError: '' });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  clearReceipt() {
+    this.setState({ receiptDataUrl: null, receiptName: '', receiptError: '' });
+  }
+
+  renderVals() {
+    const openPlayPrice = this.props.openPlayPrice ?? 100;
+    const courtPrice = this.props.courtPrice ?? 250;
+    const mapZoom = this.props.mapZoom ?? 15;
+    const { bookingType, paymentMethod, form, receiptDataUrl, receiptName, receiptError } = this.state;
+    const isOpenPlay = bookingType === 'openplay';
+    const isCourt = bookingType === 'court';
+    const isGcash = paymentMethod === 'gcash';
+    const isOnsite = paymentMethod === 'onsite';
+    const total = isOpenPlay ? openPlayPrice * (Number(form.players) || 1) : courtPrice * (Number(form.hours) || 1);
+
+    const tabBase = 'flex:1; padding:12px 16px; border-radius:12px; font-weight:700; font-size:14px; border:2px solid transparent; cursor:pointer;';
+    const tabActive = tabBase + 'background:linear-gradient(135deg,#FF3D9A,#EC2D8F); color:#fff;';
+    const tabInactive = tabBase + 'background:rgba(255,255,255,0.08); color:#D8BFE8; border-color:rgba(255,255,255,0.15);';
+
+    const inputStyle = 'width:100%; box-sizing:border-box; padding:13px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); color:#fff; font-size:15px; font-family:Inter,sans-serif;';
+
+    const gcashNumber = '0909 471 6666';
+    const gcashName = 'South Coast Pickleball Leisure Hub';
+    const canSend = !isGcash || !!receiptDataUrl;
+    const sendBtnBase = 'text-align:center; background:linear-gradient(135deg,#FF3D9A,#EC2D8F); color:#fff; padding:16px; border-radius:999px; font-weight:800; font-size:16px; margin-top:8px; box-shadow:0 10px 26px rgba(236,45,143,0.5);';
+    const sendBtnStyle = canSend ? sendBtnBase : sendBtnBase + ' opacity:0.45; pointer-events:none; cursor:not-allowed;';
+
+    const paymentLine = isGcash
+      ? `Payment: GCash\nGCash Ref #: ${form.gcashRef || '(see attached receipt)'}\n(Attaching my payment screenshot in this chat)`
+      : 'Payment: On-site (cash) at the hub';
+    const messageText = `Hi! I'd like to book ${isOpenPlay ? 'Open Play' : 'a court'} at South Coast Pickleball.\nName: ${form.name}\nPhone: ${form.phone}\nDate: ${form.date}\nTime: ${form.timeSlot}\n${isOpenPlay ? 'Players: ' + form.players : 'Hours: ' + form.hours}\nEstimated total: ₱${total}\n${paymentLine}`;
+
+    return {
+      openPlayPrice, courtPrice, mapZoom,
+      form, isOpenPlay, isCourt, total,
+      isGcash, isOnsite, gcashNumber, gcashName,
+      receiptDataUrl, receiptName, receiptError, canSend, sendBtnStyle,
+      timeSlots: ['6:00 PM','7:00 PM','8:00 PM','9:00 PM','10:00 PM','11:00 PM'],
+      partners: ['JOOLA', 'PADDLETEK', 'SELKIRK', 'FRANKLIN'],
+      tabOpenPlayStyle: isOpenPlay ? tabActive : tabInactive,
+      tabCourtStyle: isCourt ? tabActive : tabInactive,
+      tabPayOnsiteStyle: isOnsite ? tabActive : tabInactive,
+      tabPayGcashStyle: isGcash ? tabActive : tabInactive,
+      inputStyle,
+      setTypeOpenPlay: () => this.setState({ bookingType: 'openplay' }),
+      setTypeCourt: () => this.setState({ bookingType: 'court' }),
+      onPayOnsite: () => this.setState({ paymentMethod: 'onsite' }),
+      onPayGcash: () => this.setState({ paymentMethod: 'gcash' }),
+      onName: e => this.setField('name', e.target.value),
+      onPhone: e => this.setField('phone', e.target.value),
+      onDate: e => this.setField('date', e.target.value),
+      onTimeSlot: e => this.setField('timeSlot', e.target.value),
+      onHours: e => this.setField('hours', e.target.value),
+      onPlayers: e => this.setField('players', e.target.value),
+      onGcashRef: e => this.setField('gcashRef', e.target.value),
+      onReceiptChange: e => this.onReceiptChange(e),
+      onClearReceipt: () => this.clearReceipt(),
+      facebookMessageHref: 'https://m.me/SouthCoastPickleballLeisureHub?text=' + encodeURIComponent(messageText)
+    };
+  }
+}
+
+</script>
+</body>
+</html>
