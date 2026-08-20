@@ -159,6 +159,7 @@
         <button class="btn-ghost" id="refreshBtn">Refresh</button>
       </div>
     </div>
+    <div class="muted" style="margin-bottom:14px;">"Reset Slot" cancels a booking and immediately frees that court/time for other players — use it when a player's info looks fake or their payment never came through.</div>
     <div id="listErr" class="err"></div>
     <div id="listMuted" class="muted"></div>
     <div style="overflow-x:auto;">
@@ -257,6 +258,8 @@ function fmtSlot(b) {
   return 'Open Play';
 }
 
+let lastBookings = [];
+
 async function loadList(date) {
   $('listErr').textContent = '';
   $('listMuted').textContent = 'Loading…';
@@ -270,6 +273,7 @@ async function loadList(date) {
       return;
     }
     const data = await res.json();
+    lastBookings = data.bookings;
     $('listMuted').textContent = data.bookings.length ? '' : 'No bookings found.';
     for (const b of data.bookings) {
       const tr = document.createElement('tr');
@@ -284,7 +288,7 @@ async function loadList(date) {
         <td><span class="badge badge-${b.status}">${b.status}</span></td>
         <td class="actions">
           ${canConfirm ? `<button class="btn-ghost" data-act="confirmed" data-id="${b.id}">Confirm</button>` : ''}
-          ${canCancel ? `<button class="btn-danger" data-act="cancelled" data-id="${b.id}">Remove</button>` : ''}
+          ${canCancel ? `<button class="btn-danger" data-act="cancelled" data-id="${b.id}">Reset Slot</button>` : ''}
         </td>`;
       $('listBody').appendChild(tr);
     }
@@ -303,6 +307,14 @@ function escapeHtml(s) {
 $('listBody').addEventListener('click', async e => {
   const btn = e.target.closest('button[data-act]');
   if (!btn) return;
+  if (btn.dataset.act === 'cancelled') {
+    const b = lastBookings.find(x => String(x.id) === btn.dataset.id);
+    const slot = b ? (b.booking_type === 'court' ? `Court ${b.court}` : 'this slot') : 'This slot';
+    const msg = b
+      ? `Reset this slot? ${b.name}'s booking will be cancelled and ${slot} becomes available again for ${b.time_slot} on ${b.date}.`
+      : 'Reset this slot? The booking will be cancelled and the slot becomes available again.';
+    if (!confirm(msg)) return;
+  }
   btn.disabled = true;
   try {
     const res = await fetch(`${API}/api/admin/bookings/${btn.dataset.id}`, {
