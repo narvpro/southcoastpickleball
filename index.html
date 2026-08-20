@@ -15,11 +15,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&family=Dancing+Script:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="./image-slot.js"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"SportsActivityLocation","name":"South Coast Pickleball Leisure Hub","address":{"@type":"PostalAddress","streetAddress":"Jassie Street, Poblacion","addressLocality":"Santa Maria","addressRegion":"Davao Occidental","addressCountry":"PH"},"telephone":"+639094716666","openingHours":"Mo-Su 18:00-24:00","priceRange":"₱100-₱250"}
+  {"@context":"https://schema.org","@type":"SportsActivityLocation","name":"South Coast Pickleball Leisure Hub","address":{"@type":"PostalAddress","streetAddress":"Jassie Street, Poblacion","addressLocality":"Santa Maria","addressRegion":"Davao Occidental","addressCountry":"PH"},"geo":{"@type":"GeoCoordinates","latitude":6.560570,"longitude":125.4716},"telephone":"+639094716666","openingHours":"Mo-Su 18:00-24:00","priceRange":"₱100-₱250"}
   </script>
   <style>
     body { margin: 0; }
-    @keyframes floatBall { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-14px) rotate(12deg); } }
     a { color: #FF3D9A; text-decoration: none; }
     a:hover { color: #ffffff; }
   </style>
@@ -29,7 +28,10 @@
 
   <!-- NAV -->
   <div style="position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; padding:16px 32px; background:rgba(61,21,84,0.85); backdrop-filter:blur(10px); border-bottom:1px solid rgba(255,255,255,0.08);">
-    <div style="font-family:'Dancing Script',cursive; font-size:26px; font-weight:700; color:#fff;">South Coast</div>
+    <div style="display:flex; flex-direction:column; line-height:1;">
+      <div style="font-family:'Dancing Script',cursive; font-size:24px; font-weight:700; color:#fff;">South Coast</div>
+      <div style="font-family:'Poppins',sans-serif; font-weight:800; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:#FF7FC0; margin-top:2px; white-space:nowrap;">Pickleball Leisure Hub</div>
+    </div>
     <div style="display:flex; align-items:center; gap:28px;" data-nav-links>
       <a href="#booking" style="font-size:14px; font-weight:600; color:#EADDF5;">Booking</a>
       <a href="#about" style="font-size:14px; font-weight:600; color:#EADDF5;">The Hub</a>
@@ -42,7 +44,7 @@
   <!-- HERO -->
   <div style="position:relative; min-height:92vh; display:flex; align-items:center; background:linear-gradient(150deg,#3D1554 0%, #5B2A86 45%, #B4308F 100%);">
     <div style="position:absolute; inset:0; opacity:0.9;">
-      <image-slot id="hero-bg" shape="rect" placeholder="Drop hero court photo (palms + purple court)" fit="cover" style="width:100%; height:100%; opacity:0.35;"></image-slot>
+      <image-slot id="hero-bg" shape="rect" placeholder="Drop hero court photo (palms + purple court)" fit="cover" style="width:100%; height:100%; opacity:0.35;" src="https://images.unsplash.com/photo-1778180883807-19962eda4d99?fm=jpg&q=60&w=2400&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" credit="Photo by Brian Zajac on Unsplash" credit-href="https://unsplash.com/@brianzajac"></image-slot>
     </div>
     <div style="position:relative; z-index:2; max-width:1200px; margin:0 auto; padding:80px 32px; display:grid; grid-template-columns:1.1fr 0.9fr; gap:48px; align-items:center; width:100%;">
       <div>
@@ -56,8 +58,8 @@
         </div>
       </div>
       <div style="position:relative; aspect-ratio:4/5; border-radius:28px; overflow:hidden; box-shadow:0 30px 70px rgba(0,0,0,0.4); border:4px solid rgba(255,255,255,0.15);">
-        <image-slot id="hero-main" shape="rect" placeholder="Drop court + palms hero photo" fit="cover" style="width:100%; height:100%;"></image-slot>
-        <div style="position:absolute; top:20px; right:20px; font-size:44px; animation:floatBall 3.5s ease-in-out infinite; pointer-events:none;">🥒</div>
+        <image-slot id="hero-main" shape="rect" placeholder="Drop court + palms hero photo" fit="cover" style="width:100%; height:100%;" src="https://images.unsplash.com/photo-1747027694225-cbf12dd20826?fm=jpg&q=60&w=2400&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" credit="Photo by Venti Views on Unsplash" credit-href="https://unsplash.com/@ventiviews"></image-slot>
+        <div style="position:absolute; inset:0; background:linear-gradient(150deg,rgba(91,42,134,0.55),rgba(255,61,154,0.35)); mix-blend-mode:color; pointer-events:none;"></div>
       </div>
     </div>
   </div>
@@ -184,8 +186,9 @@
           <div style="font-family:'Poppins',sans-serif; font-weight:800; font-size:18px; margin-bottom:8px;">Court Booking</div>
           <div style="color:#D8BFE8; font-size:14px; line-height:1.6;">₱{{ courtPrice }} per hour · rent the whole court for your group.</div>
         </div>
-        <div style="aspect-ratio:16/10; border-radius:20px; overflow:hidden;">
-          <image-slot id="booking-photo" shape="rect" placeholder="Drop a court action photo" fit="cover" style="width:100%; height:100%;"></image-slot>
+        <div style="position:relative; aspect-ratio:16/10; border-radius:20px; overflow:hidden;">
+          <image-slot id="booking-photo" shape="rect" placeholder="Drop a court action photo" fit="cover" style="width:100%; height:100%;" src="https://images.unsplash.com/photo-1747027694173-93c7576ab263?fm=jpg&q=60&w=2400&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" credit="Photo by Venti Views on Unsplash" credit-href="https://unsplash.com/@ventiviews"></image-slot>
+          <div style="position:absolute; inset:0; background:linear-gradient(150deg,rgba(91,42,134,0.55),rgba(255,61,154,0.35)); mix-blend-mode:color; pointer-events:none;"></div>
         </div>
       </div>
     </div>
@@ -193,8 +196,9 @@
 
   <!-- ABOUT -->
   <div id="about" style="max-width:1100px; margin:0 auto; padding:60px 32px 100px; display:grid; grid-template-columns:0.9fr 1.1fr; gap:56px; align-items:center;">
-    <div style="aspect-ratio:1/1; border-radius:24px; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.35);">
-      <image-slot id="about-photo" shape="rect" placeholder="Drop a photo of the purple/lilac court" fit="cover" style="width:100%; height:100%;"></image-slot>
+    <div style="position:relative; aspect-ratio:1/1; border-radius:24px; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.35);">
+      <image-slot id="about-photo" shape="rect" placeholder="Drop a photo of the purple/lilac court" fit="cover" style="width:100%; height:100%;" src="https://images.unsplash.com/photo-1693142518820-78d7a05f1546?fm=jpg&q=60&w=2400&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" credit="Photo by Alex Saks on Unsplash" credit-href="https://unsplash.com/@alexsaks"></image-slot>
+      <div style="position:absolute; inset:0; background:linear-gradient(150deg,rgba(91,42,134,0.55),rgba(255,61,154,0.35)); mix-blend-mode:color; pointer-events:none;"></div>
     </div>
     <div>
       <div style="font-family:'Poppins',sans-serif; font-weight:900; font-size:34px; text-transform:uppercase; letter-spacing:0.5px;">The Hub</div>
@@ -226,10 +230,10 @@
           Jassie Street — along the street going to Boracay<br/>
           <span style="color:#C6D600;">Previously the Banana Chips Warehouse</span>
         </div>
-        <a href="https://www.google.com/maps/search/?api=1&query=Poblacion+Santa+Maria+Davao+Occidental+Jassie+Street" target="_blank" style="display:inline-block; margin-top:24px; background:linear-gradient(135deg,#FF3D9A,#EC2D8F); color:#fff; padding:14px 28px; border-radius:999px; font-weight:700; font-size:15px;">Open in Google Maps</a>
+        <a href="https://www.google.com/maps/search/?api=1&query=6.560570,125.4716" target="_blank" style="display:inline-block; margin-top:24px; background:linear-gradient(135deg,#FF3D9A,#EC2D8F); color:#fff; padding:14px 28px; border-radius:999px; font-weight:700; font-size:15px;">Open in Google Maps</a>
       </div>
       <div style="border-radius:20px; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.35); height:340px;">
-        <iframe title="Map to South Coast Pickleball Leisure Hub" src="https://www.google.com/maps?q=Poblacion,Santa+Maria,Davao+Occidental,Philippines&z={{ mapZoom }}&output=embed" style="width:100%; height:100%; border:0;" loading="lazy"></iframe>
+        <iframe title="Map to South Coast Pickleball Leisure Hub" src="https://www.google.com/maps?q=6.560570,125.4716&z={{ mapZoom }}&output=embed" style="width:100%; height:100%; border:0;" loading="lazy"></iframe>
       </div>
     </div>
   </div>
