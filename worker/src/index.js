@@ -11,8 +11,8 @@ function corsHeaders(origin) {
   const headers = { 'Vary': 'Origin' };
   if (allowed) {
     headers['Access-Control-Allow-Origin'] = origin;
-    headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS';
-    headers['Access-Control-Allow-Headers'] = 'Content-Type';
+    headers['Access-Control-Allow-Methods'] = 'GET, POST, PATCH, OPTIONS';
+    headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
   }
   return headers;
 }
@@ -40,6 +40,50 @@ function isDateWithinBookingWindow(dateStr) {
   const max = new Date();
   max.setUTCDate(max.getUTCDate() + MAX_ADVANCE_DAYS);
   return dateStr <= max.toISOString().slice(0, 10);
+}
+
+function isAdminAuthed(request, env) {
+  const auth = request.headers.get('Authorization') || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+  return !!env.ADMIN_PASSWORD && token === env.ADMIN_PASSWORD;
+}
+
+// Shared by the public and admin create paths: active bookings (confirmed,
+// or pending and not yet expired) on this court/date whose slot range
+// overlaps [startIdx, startIdx + hours). excludeId lets an admin edit skip
+// comparing a row against itself.
+async function findCourtConflict(env, date, court, startIdx, hours, excludeId) {
+  const { results } = await env.DB.prepare(
+    `SELECT id, time_slot, hours FROM bookings
+     WHERE date = ? AND booking_type = 'court' AND court = ?
+       AND (status = 'confirmed' OR (status = 'pending' AND created_at > datetime('now', ?)))`
+  ).bind(date, court, `-${PENDING_EXPIRY_HOURS} hours`).all();
+
+  const newEnd = startIdx + hours;
+  for (const row of results) {
+    if (excludeId && row.id === excludeId) continue;
+    const existingStart = TIME_SLOTS.indexOf(row.time_slot);
+    const existingEnd = existingStart + row.hours;
+    if (existingStart < newEnd && startIdx < existingEnd) return true;
+  }
+  return false;
+}
+
+function validateBookingBody(body) {
+  const { date, timeSlot, bookingType, name, phone, paymentMethod } = body;
+  const hours = Math.max(1, Math.min(6, parseInt(body.hours, 10) || 1));
+  const court = bookingType === 'court' ? parseInt(body.court, 10) : 0;
+  const startIdx = TIME_SLOTS.indexOf(timeSlot);
+
+  if (!isValidDate(date)) return { error: 'Invalid or missing date.' };
+  if (startIdx === -1) return { error: 'Invalid time slot.' };
+  if (startIdx + hours > TIME_SLOTS.length) return { error: 'That duration runs past closing time (12 AM).' };
+  if (bookingType !== 'openplay' && bookingType !== 'court') return { error: 'Invalid booking type.' };
+  if (bookingType === 'court' && (court !== 1 && court !== 2)) return { error: 'Please select Court 1 or Court 2.' };
+  if (!name || !String(name).trim() || !phone || !String(phone).trim() || !paymentMethod) {
+    return { error: 'Name, phone, and payment method are required.' };
+  }
+  return { date, timeSlot, startIdx, hours, court, bookingType, name: String(name).trim(), phone: String(phone).trim(), paymentMethod };
 }
 
 async function handleAvailability(url, env, origin) {
@@ -74,53 +118,72 @@ async function handleCreateBooking(request, env, origin) {
     return json({ error: 'Invalid JSON body.' }, 400, origin);
   }
 
-  const { date, timeSlot, bookingType, name, phone, paymentMethod } = body;
-  const hours = Math.max(1, Math.min(6, parseInt(body.hours, 10) || 1));
-  const court = bookingType === 'court' ? parseInt(body.court, 10) : 0;
-
-  if (!isValidDate(date) || !isDateWithinBookingWindow(date)) {
+  const v = validateBookingBody(body);
+  if (v.error) return json({ error: v.error }, 400, origin);
+  if (!isDateWithinBookingWindow(v.date)) {
     return json({ error: `Bookings are only open for the next ${MAX_ADVANCE_DAYS} days.` }, 400, origin);
   }
-  const startIdx = TIME_SLOTS.indexOf(timeSlot);
-  if (startIdx === -1) {
-    return json({ error: 'Invalid time slot.' }, 400, origin);
-  }
-  if (startIdx + hours > TIME_SLOTS.length) {
-    return json({ error: 'That duration runs past closing time (12 AM).' }, 400, origin);
-  }
-  if (bookingType !== 'openplay' && bookingType !== 'court') {
-    return json({ error: 'Invalid booking type.' }, 400, origin);
-  }
-  if (bookingType === 'court' && (court !== 1 && court !== 2)) {
-    return json({ error: 'Please select Court 1 or Court 2.' }, 400, origin);
-  }
-  if (!name || !String(name).trim() || !phone || !String(phone).trim() || !paymentMethod) {
-    return json({ error: 'Name, phone, and payment method are required.' }, 400, origin);
-  }
 
-  if (bookingType === 'court') {
-    const { results } = await env.DB.prepare(
-      `SELECT time_slot, hours FROM bookings
-       WHERE date = ? AND booking_type = 'court' AND court = ?
-         AND (status = 'confirmed' OR (status = 'pending' AND created_at > datetime('now', ?)))`
-    ).bind(date, court, `-${PENDING_EXPIRY_HOURS} hours`).all();
-
-    const newEnd = startIdx + hours;
-    for (const row of results) {
-      const existingStart = TIME_SLOTS.indexOf(row.time_slot);
-      const existingEnd = existingStart + row.hours;
-      if (existingStart < newEnd && startIdx < existingEnd) {
-        return json({ error: `Court ${court} is already booked for part of that time. Pick another court or time.` }, 409, origin);
-      }
-    }
+  if (v.bookingType === 'court' && await findCourtConflict(env, v.date, v.court, v.startIdx, v.hours)) {
+    return json({ error: `Court ${v.court} is already booked for part of that time. Pick another court or time.` }, 409, origin);
   }
 
   const insert = await env.DB.prepare(
     `INSERT INTO bookings (date, time_slot, hours, court, booking_type, name, phone, payment_method, status)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')`
-  ).bind(date, timeSlot, hours, court, bookingType, String(name).trim(), String(phone).trim(), paymentMethod).run();
+  ).bind(v.date, v.timeSlot, v.hours, v.court, v.bookingType, v.name, v.phone, v.paymentMethod).run();
 
   return json({ id: insert.meta.last_row_id, status: 'pending' }, 201, origin);
+}
+
+async function handleAdminList(url, env, origin) {
+  const date = url.searchParams.get('date');
+  const stmt = date && isValidDate(date)
+    ? env.DB.prepare(`SELECT * FROM bookings WHERE date = ? ORDER BY time_slot, court`).bind(date)
+    : env.DB.prepare(`SELECT * FROM bookings WHERE date >= ? ORDER BY date, time_slot LIMIT 200`).bind(todayStr());
+  const { results } = await stmt.all();
+  return json({ bookings: results }, 200, origin);
+}
+
+// Admin-entered bookings (phone-in / walk-up players) skip the public
+// 14-day self-serve window — the owner is taking the request directly —
+// and land straight in 'confirmed' status since there's no online payment
+// step waiting on confirmation.
+async function handleAdminCreate(request, env, origin) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: 'Invalid JSON body.' }, 400, origin);
+  }
+  const v = validateBookingBody(body);
+  if (v.error) return json({ error: v.error }, 400, origin);
+
+  if (v.bookingType === 'court' && await findCourtConflict(env, v.date, v.court, v.startIdx, v.hours)) {
+    return json({ error: `Court ${v.court} is already booked for part of that time.` }, 409, origin);
+  }
+
+  const insert = await env.DB.prepare(
+    `INSERT INTO bookings (date, time_slot, hours, court, booking_type, name, phone, payment_method, status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'confirmed')`
+  ).bind(v.date, v.timeSlot, v.hours, v.court, v.bookingType, v.name, v.phone, v.paymentMethod).run();
+
+  return json({ id: insert.meta.last_row_id, status: 'confirmed' }, 201, origin);
+}
+
+async function handleAdminUpdate(id, request, env, origin) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: 'Invalid JSON body.' }, 400, origin);
+  }
+  if (!['confirmed', 'cancelled', 'pending'].includes(body.status)) {
+    return json({ error: 'Invalid status.' }, 400, origin);
+  }
+  const result = await env.DB.prepare(`UPDATE bookings SET status = ? WHERE id = ?`).bind(body.status, id).run();
+  if (!result.meta.changes) return json({ error: 'Booking not found.' }, 404, origin);
+  return json({ ok: true }, 200, origin);
 }
 
 export default {
@@ -138,6 +201,22 @@ export default {
       if (url.pathname === '/api/bookings' && request.method === 'POST') {
         return await handleCreateBooking(request, env, origin);
       }
+
+      // Everything under /api/admin/ requires the admin bearer token.
+      if (url.pathname.startsWith('/api/admin/')) {
+        if (!isAdminAuthed(request, env)) return json({ error: 'Unauthorized.' }, 401, origin);
+        if (url.pathname === '/api/admin/bookings' && request.method === 'GET') {
+          return await handleAdminList(url, env, origin);
+        }
+        if (url.pathname === '/api/admin/bookings' && request.method === 'POST') {
+          return await handleAdminCreate(request, env, origin);
+        }
+        const idMatch = url.pathname.match(/^\/api\/admin\/bookings\/(\d+)$/);
+        if (idMatch && request.method === 'PATCH') {
+          return await handleAdminUpdate(Number(idMatch[1]), request, env, origin);
+        }
+      }
+
       return json({ error: 'Not found.' }, 404, origin);
     } catch (e) {
       // Any uncaught error here would otherwise fall through to the
