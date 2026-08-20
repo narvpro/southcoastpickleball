@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>South Coast Pickleball — Admin</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; background: #3D1554; color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px 80px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: #D8BFE8; font-size: 14px; margin-bottom: 28px; }
+  .card {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px; padding: 22px; margin-bottom: 20px;
+  }
+  label { font-size: 12px; color: #D8BFE8; display: block; margin-bottom: 5px; }
+  input, select {
+    width: 100%; box-sizing: border-box; padding: 11px 13px; border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08);
+    color: #fff; font-size: 14px; font-family: inherit;
+  }
+  input::placeholder { color: #B39BC8; }
+  button {
+    cursor: pointer; border: 0; border-radius: 999px; font-weight: 700;
+    font-family: inherit; font-size: 14px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg,#FF3D9A,#EC2D8F); color: #fff; padding: 12px 22px;
+  }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-ghost {
+    background: rgba(255,255,255,0.1); color: #EADDF5; padding: 8px 16px; font-size: 12px;
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+  .btn-danger {
+    background: rgba(255,61,154,0.15); color: #FF7FC0; padding: 8px 16px; font-size: 12px;
+    border: 1px solid rgba(255,61,154,0.4);
+  }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .row { display: flex; flex-direction: column; gap: 14px; }
+  .err { color: #FF7FC0; font-size: 13px; margin-top: 10px; }
+  .ok { color: #C6D600; font-size: 13px; margin-top: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid rgba(255,255,255,0.08); vertical-align: top; }
+  th { color: #B39BC8; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+  .badge-pending { background: rgba(198,214,0,0.15); color: #C6D600; }
+  .badge-confirmed { background: rgba(64,220,140,0.15); color: #4ADE80; }
+  .badge-cancelled { background: rgba(255,255,255,0.08); color: #8A6E9E; text-decoration: line-through; }
+  .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  .gate { max-width: 360px; margin: 120px auto; text-align: center; }
+  .toolbar { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; margin-bottom: 16px; }
+  .toolbar > div { flex: 1; min-width: 160px; }
+  .muted { color: #8A6E9E; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div id="gate" class="wrap gate">
+  <h1>South Coast Pickleball</h1>
+  <div class="sub">Admin</div>
+  <div class="card">
+    <label for="pw">Admin password</label>
+    <input id="pw" type="password" placeholder="Enter password" />
+    <button class="btn-primary" id="unlockBtn" style="width:100%; margin-top:14px;">Unlock</button>
+    <div class="err" id="gateErr"></div>
+  </div>
+</div>
+
+<div id="app" class="wrap" style="display:none;">
+  <h1>South Coast Pickleball</h1>
+  <div class="sub">Admin — manage bookings</div>
+
+  <div class="card">
+    <div style="font-weight:700; margin-bottom:14px;">Add a booking for a caller</div>
+    <div class="row">
+      <div class="grid2">
+        <div>
+          <label>Full name</label>
+          <input id="f_name" placeholder="Full name" />
+        </div>
+        <div>
+          <label>Phone number</label>
+          <input id="f_phone" placeholder="Phone number" />
+        </div>
+      </div>
+      <div class="grid3">
+        <div>
+          <label>Date</label>
+          <input id="f_date" type="date" />
+        </div>
+        <div>
+          <label>Time</label>
+          <select id="f_time"></select>
+        </div>
+        <div>
+          <label>Type</label>
+          <select id="f_type">
+            <option value="openplay">Open Play</option>
+            <option value="court">Court Booking</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid3" id="f_courtRow" style="display:none;">
+        <div>
+          <label>Court</label>
+          <select id="f_court">
+            <option value="1">Court 1</option>
+            <option value="2">Court 2</option>
+          </select>
+        </div>
+        <div>
+          <label>Hours</label>
+          <input id="f_hours" type="number" min="1" max="6" value="1" />
+        </div>
+        <div>
+          <label>Payment</label>
+          <select id="f_payment">
+            <option value="onsite">On-Site</option>
+            <option value="gcash">GCash</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid2" id="f_openplayRow">
+        <div>
+          <label>Players</label>
+          <input id="f_players" type="number" min="1" max="12" value="1" />
+        </div>
+        <div>
+          <label>Payment</label>
+          <select id="f_paymentOpen">
+            <option value="onsite">On-Site</option>
+            <option value="gcash">GCash</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-primary" id="addBtn">Add Confirmed Booking</button>
+      <div class="err" id="addErr"></div>
+      <div class="ok" id="addOk"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toolbar">
+      <div>
+        <label>Filter by date</label>
+        <input id="filterDate" type="date" />
+      </div>
+      <div style="flex:0;">
+        <button class="btn-ghost" id="showUpcoming">Show all upcoming</button>
+      </div>
+      <div style="flex:0;">
+        <button class="btn-ghost" id="refreshBtn">Refresh</button>
+      </div>
+    </div>
+    <div id="listErr" class="err"></div>
+    <div id="listMuted" class="muted"></div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th><th>Time</th><th>Slot</th><th>Player</th><th>Payment</th><th>Status</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="listBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://southcoastpickleball-api.snowy-snow-4eda.workers.dev';
+const TIME_SLOTS = ['6:00 PM','7:00 PM','8:00 PM','9:00 PM','10:00 PM','11:00 PM'];
+const TOKEN_KEY = 'scp_admin_token';
+
+const $ = id => document.getElementById(id);
+TIME_SLOTS.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; $('f_time').appendChild(o); });
+
+function authHeaders() {
+  return { 'Authorization': 'Bearer ' + localStorage.getItem(TOKEN_KEY), 'Content-Type': 'application/json' };
+}
+
+async function tryUnlock(token) {
+  const res = await fetch(`${API}/api/admin/bookings`, { headers: { 'Authorization': 'Bearer ' + token } });
+  if (res.status === 401) return false;
+  localStorage.setItem(TOKEN_KEY, token);
+  $('gate').style.display = 'none';
+  $('app').style.display = 'block';
+  loadList();
+  return true;
+}
+
+$('unlockBtn').addEventListener('click', async () => {
+  $('gateErr').textContent = '';
+  const pw = $('pw').value;
+  if (!pw) return;
+  $('unlockBtn').disabled = true;
+  const ok = await tryUnlock(pw).catch(() => false);
+  $('unlockBtn').disabled = false;
+  if (!ok) $('gateErr').textContent = 'Wrong password.';
+});
+$('pw').addEventListener('keydown', e => { if (e.key === 'Enter') $('unlockBtn').click(); });
+
+const saved = localStorage.getItem(TOKEN_KEY);
+if (saved) tryUnlock(saved);
+
+$('f_type').addEventListener('change', () => {
+  const isCourt = $('f_type').value === 'court';
+  $('f_courtRow').style.display = isCourt ? 'grid' : 'none';
+  $('f_openplayRow').style.display = isCourt ? 'none' : 'grid';
+});
+
+$('addBtn').addEventListener('click', async () => {
+  $('addErr').textContent = ''; $('addOk').textContent = '';
+  const isCourt = $('f_type').value === 'court';
+  const body = {
+    name: $('f_name').value,
+    phone: $('f_phone').value,
+    date: $('f_date').value,
+    timeSlot: $('f_time').value,
+    bookingType: $('f_type').value,
+    hours: isCourt ? Number($('f_hours').value) || 1 : 1,
+    court: isCourt ? Number($('f_court').value) : null,
+    paymentMethod: isCourt ? $('f_payment').value : $('f_paymentOpen').value
+  };
+  if (!body.name.trim() || !body.phone.trim() || !body.date) {
+    $('addErr').textContent = 'Name, phone, and date are required.';
+    return;
+  }
+  $('addBtn').disabled = true;
+  try {
+    const res = await fetch(`${API}/api/admin/bookings`, { method: 'POST', headers: authHeaders(), body: JSON.stringify(body) });
+    const data = await res.json();
+    if (!res.ok) { $('addErr').textContent = data.error || 'Could not add booking.'; return; }
+    $('addOk').textContent = 'Booking added and confirmed.';
+    $('f_name').value = ''; $('f_phone').value = '';
+    loadList();
+  } catch (e) {
+    $('addErr').textContent = 'Network error — please try again.';
+  } finally {
+    $('addBtn').disabled = false;
+  }
+});
+
+function fmtSlot(b) {
+  if (b.booking_type === 'court') {
+    const endIdx = TIME_SLOTS.indexOf(b.time_slot) + b.hours;
+    const end = endIdx < TIME_SLOTS.length ? TIME_SLOTS[endIdx] : '12:00 AM';
+    return `Court ${b.court} · ${b.hours}h (${b.time_slot}–${end})`;
+  }
+  return 'Open Play';
+}
+
+async function loadList(date) {
+  $('listErr').textContent = '';
+  $('listMuted').textContent = 'Loading…';
+  $('listBody').innerHTML = '';
+  try {
+    const url = date ? `${API}/api/admin/bookings?date=${encodeURIComponent(date)}` : `${API}/api/admin/bookings`;
+    const res = await fetch(url, { headers: authHeaders() });
+    if (res.status === 401) {
+      localStorage.removeItem(TOKEN_KEY);
+      $('app').style.display = 'none'; $('gate').style.display = 'block';
+      return;
+    }
+    const data = await res.json();
+    $('listMuted').textContent = data.bookings.length ? '' : 'No bookings found.';
+    for (const b of data.bookings) {
+      const tr = document.createElement('tr');
+      const canConfirm = b.status !== 'confirmed';
+      const canCancel = b.status !== 'cancelled';
+      tr.innerHTML = `
+        <td>${b.date}</td>
+        <td>${b.time_slot}</td>
+        <td>${fmtSlot(b)}</td>
+        <td>${escapeHtml(b.name)}<br><span class="muted">${escapeHtml(b.phone)}</span></td>
+        <td>${b.payment_method === 'gcash' ? 'GCash' : 'On-Site'}</td>
+        <td><span class="badge badge-${b.status}">${b.status}</span></td>
+        <td class="actions">
+          ${canConfirm ? `<button class="btn-ghost" data-act="confirmed" data-id="${b.id}">Confirm</button>` : ''}
+          ${canCancel ? `<button class="btn-danger" data-act="cancelled" data-id="${b.id}">Remove</button>` : ''}
+        </td>`;
+      $('listBody').appendChild(tr);
+    }
+  } catch (e) {
+    $('listErr').textContent = 'Could not load bookings.';
+    $('listMuted').textContent = '';
+  }
+}
+
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s == null ? '' : String(s);
+  return d.innerHTML;
+}
+
+$('listBody').addEventListener('click', async e => {
+  const btn = e.target.closest('button[data-act]');
+  if (!btn) return;
+  btn.disabled = true;
+  try {
+    const res = await fetch(`${API}/api/admin/bookings/${btn.dataset.id}`, {
+      method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ status: btn.dataset.act })
+    });
+    if (res.ok) loadList($('filterDate').value || undefined);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+$('filterDate').addEventListener('change', () => loadList($('filterDate').value || undefined));
+$('showUpcoming').addEventListener('click', () => { $('filterDate').value = ''; loadList(); });
+$('refreshBtn').addEventListener('click', () => loadList($('filterDate').value || undefined));
+
+(() => {
+  const today = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const iso = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+  $('f_date').value = iso;
+  $('f_date').min = iso;
+})();
+</script>
+</body>
+</html>
