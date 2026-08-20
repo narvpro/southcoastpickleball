@@ -105,17 +105,25 @@
           <input placeholder="Full name" value="{{ form.name }}" onChange="{{ onName }}" style="{{ inputStyle }}" />
           <input placeholder="Phone number" value="{{ form.phone }}" onChange="{{ onPhone }}" style="{{ inputStyle }}" />
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-            <input type="date" value="{{ form.date }}" onChange="{{ onDate }}" style="{{ inputStyle }}" />
+            <input type="date" min="{{ todayStr }}" max="{{ maxDateStr }}" value="{{ form.date }}" onChange="{{ onDate }}" style="{{ inputStyle }}" />
             <select value="{{ form.timeSlot }}" onChange="{{ onTimeSlot }}" style="{{ inputStyle }}">
               <sc-for list="{{ timeSlots }}" as="slot" hint-placeholder-count="6">
                 <option value="{{ slot }}">{{ slot }}</option>
               </sc-for>
             </select>
           </div>
+          <div style="font-size:12px; color:#B39BC8; margin-top:-8px;">Online booking opens up to 14 days ahead — for dates further out, call or message us.</div>
           <sc-if value="{{ isCourt }}" hint-placeholder-val="{{ false }}">
             <div>
               <label style="font-size:13px; color:#D8BFE8; display:block; margin-bottom:6px;">Hours needed</label>
               <input type="number" min="1" max="6" value="{{ form.hours }}" onChange="{{ onHours }}" style="{{ inputStyle }}" />
+            </div>
+            <div>
+              <label style="font-size:13px; color:#D8BFE8; display:block; margin-bottom:6px;">Court — only 2 on site</label>
+              <div style="display:flex; gap:10px;">
+                <button onClick="{{ onSelectCourt1 }}" disabled="{{ court1Disabled }}" style="{{ court1Style }}">Court 1 · {{ court1Label }}</button>
+                <button onClick="{{ onSelectCourt2 }}" disabled="{{ court2Disabled }}" style="{{ court2Style }}">Court 2 · {{ court2Label }}</button>
+              </div>
             </div>
           </sc-if>
           <sc-if value="{{ isOpenPlay }}" hint-placeholder-val="{{ true }}">
@@ -170,7 +178,10 @@
             </div>
           </sc-if>
 
-          <a href="{{ facebookMessageHref }}" target="_blank" style="{{ sendBtnStyle }}">Send Request · Message on Facebook</a>
+          <sc-if value="{{ submitError }}" hint-placeholder-val="{{ false }}">
+            <div style="color:#FF7FC0; font-size:13px; background:rgba(255,61,154,0.1); border:1px solid rgba(255,61,154,0.4); border-radius:10px; padding:10px 14px;">{{ submitError }}</div>
+          </sc-if>
+          <button onClick="{{ onSendRequest }}" style="{{ sendBtnStyle }}">{{ sendBtnLabel }}</button>
           <a href="tel:+639094716666" style="text-align:center; background:rgba(255,255,255,0.1); border:2px solid rgba(255,255,255,0.4); color:#fff; padding:14px; border-radius:999px; font-weight:700; font-size:15px;">Or call 0909 471 6666</a>
 
           <div style="font-size:12px; color:#B39BC8; line-height:1.5; margin-top:6px;">We collect your name, phone, and requested slot only to confirm your booking — never shared with third parties. Pay on-site in cash, or pay via GCash and share your receipt so we can confirm.</div>
@@ -262,6 +273,15 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;openPlayPrice&quot;: {&quot;editor&quot;: &quot;int&quot;, &quot;default&quot;: 100, &quot;tsType&quot;: &quot;number&quot;, &quot;min&quot;: 50, &quot;max&quot;: 500, &quot;unit&quot;: &quot;₱&quot;, &quot;section&quot;: &quot;Rates&quot;}, &quot;courtPrice&quot;: {&quot;editor&quot;: &quot;int&quot;, &quot;default&quot;: 250, &quot;tsType&quot;: &quot;number&quot;, &quot;min&quot;: 100, &quot;max&quot;: 1000, &quot;unit&quot;: &quot;₱&quot;, &quot;section&quot;: &quot;Rates&quot;}, &quot;mapZoom&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 15, &quot;tsType&quot;: &quot;number&quot;, &quot;min&quot;: 10, &quot;max&quot;: 18, &quot;section&quot;: &quot;Map&quot;}}">
 
+const BOOKING_API = 'https://southcoastpickleball-api.snowy-snow-4eda.workers.dev';
+const TIME_SLOTS = ['6:00 PM','7:00 PM','8:00 PM','9:00 PM','10:00 PM','11:00 PM'];
+const MAX_ADVANCE_DAYS = 14;
+
+function toDateStr(d) {
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
 class Component extends DCLogic {
   state = {
     bookingType: 'openplay',
@@ -269,7 +289,12 @@ class Component extends DCLogic {
     form: { name: '', phone: '', date: '', timeSlot: '6:00 PM', hours: 1, players: 1, gcashRef: '' },
     receiptDataUrl: null,
     receiptName: '',
-    receiptError: ''
+    receiptError: '',
+    court: null,
+    availability: null,
+    availabilityLoading: false,
+    submitting: false,
+    submitError: ''
   };
 
   setField(key, value) {
@@ -294,11 +319,103 @@ class Component extends DCLogic {
     this.setState({ receiptDataUrl: null, receiptName: '', receiptError: '' });
   }
 
+  onDate(date) {
+    this.setField('date', date);
+    this.setState({ court: null, submitError: '' });
+    if (!date) { this.setState({ availability: null }); return; }
+    this.setState({ availabilityLoading: true });
+    fetch(`${BOOKING_API}/api/availability?date=${encodeURIComponent(date)}`)
+      .then(r => r.json())
+      .then(data => this.setState({ availability: data, availabilityLoading: false }))
+      .catch(() => this.setState({ availabilityLoading: false }));
+  }
+
+  isCourtAvailable(court) {
+    const { form, availability } = this.state;
+    if (!availability) return false;
+    const booked = availability.courts[String(court)] || [];
+    const startIdx = TIME_SLOTS.indexOf(form.timeSlot);
+    const hours = Math.max(1, Math.min(6, Number(form.hours) || 1));
+    for (let i = startIdx; i < Math.min(startIdx + hours, TIME_SLOTS.length); i++) {
+      if (booked.includes(TIME_SLOTS[i])) return false;
+    }
+    return true;
+  }
+
+  selectCourt(court) {
+    if (!this.isCourtAvailable(court)) return;
+    this.setState({ court, submitError: '' });
+  }
+
+  async onSendRequest() {
+    const { form, bookingType, paymentMethod, receiptDataUrl, court } = this.state;
+    if (paymentMethod === 'gcash' && !receiptDataUrl) return;
+    if (!form.name.trim() || !form.phone.trim() || !form.date) {
+      this.setState({ submitError: 'Please fill in your name, phone, and date.' });
+      return;
+    }
+    if (bookingType === 'court') {
+      if (!court) {
+        this.setState({ submitError: 'Please select Court 1 or Court 2.' });
+        return;
+      }
+      if (!this.isCourtAvailable(court)) {
+        this.setState({ submitError: `Court ${court} is no longer available for that time — pick another.` });
+        return;
+      }
+    }
+
+    this.setState({ submitting: true, submitError: '' });
+    // Opened synchronously within the click handler — a browser's popup
+    // blocker allows this, but would silently block a window.open() called
+    // after the await below (no longer inside the user-gesture stack).
+    const fbWindow = window.open('', '_blank');
+    const openPlayPrice = this.props.openPlayPrice ?? 100;
+    const courtPrice = this.props.courtPrice ?? 250;
+    const isOpenPlay = bookingType === 'openplay';
+    const hours = Math.max(1, Math.min(6, Number(form.hours) || 1));
+    const total = isOpenPlay ? openPlayPrice * (Number(form.players) || 1) : courtPrice * hours;
+
+    try {
+      const res = await fetch(`${BOOKING_API}/api/bookings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          date: form.date, timeSlot: form.timeSlot, hours,
+          court: isOpenPlay ? null : court, bookingType,
+          name: form.name, phone: form.phone, paymentMethod
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (fbWindow) fbWindow.close();
+        this.setState({ submitting: false, submitError: data.error || 'That slot is no longer available.' });
+        this.onDate(form.date);
+        return;
+      }
+
+      const courtLine = bookingType === 'court' ? `Court: ${court}\n` : '';
+      const paymentLine = paymentMethod === 'gcash'
+        ? `Payment: GCash\nGCash Ref #: ${form.gcashRef || '(see attached receipt)'}\n(Attaching my payment screenshot in this chat)`
+        : 'Payment: On-site (cash) at the hub';
+      const messageText = `Hi! I'd like to book ${isOpenPlay ? 'Open Play' : 'a court'} at South Coast Pickleball.\nName: ${form.name}\nPhone: ${form.phone}\nDate: ${form.date}\nTime: ${form.timeSlot}\n${courtLine}${isOpenPlay ? 'Players: ' + form.players : 'Hours: ' + hours}\nEstimated total: ₱${total}\n${paymentLine}`;
+      const fbHref = 'https://m.me/SouthCoastPickleballLeisureHub?text=' + encodeURIComponent(messageText);
+      if (fbWindow) fbWindow.location.href = fbHref;
+      else window.open(fbHref, '_blank');
+
+      this.setState({ submitting: false, submitError: '' });
+      this.onDate(form.date);
+    } catch (e) {
+      if (fbWindow) fbWindow.close();
+      this.setState({ submitting: false, submitError: 'Network error — please try again, or just call/message us directly.' });
+    }
+  }
+
   renderVals() {
     const openPlayPrice = this.props.openPlayPrice ?? 100;
     const courtPrice = this.props.courtPrice ?? 250;
     const mapZoom = this.props.mapZoom ?? 15;
-    const { bookingType, paymentMethod, form, receiptDataUrl, receiptName, receiptError } = this.state;
+    const { bookingType, paymentMethod, form, receiptDataUrl, receiptName, receiptError, court, availabilityLoading, submitting, submitError } = this.state;
     const isOpenPlay = bookingType === 'openplay';
     const isCourt = bookingType === 'court';
     const isGcash = paymentMethod === 'gcash';
@@ -313,41 +430,67 @@ class Component extends DCLogic {
 
     const gcashNumber = '0909 471 6666';
     const gcashName = 'South Coast Pickleball Leisure Hub';
-    const canSend = !isGcash || !!receiptDataUrl;
-    const sendBtnBase = 'text-align:center; background:linear-gradient(135deg,#FF3D9A,#EC2D8F); color:#fff; padding:16px; border-radius:999px; font-weight:800; font-size:16px; margin-top:8px; box-shadow:0 10px 26px rgba(236,45,143,0.5);';
+    const canSend = (!isGcash || !!receiptDataUrl) && !submitting;
+    const sendBtnBase = 'text-align:center; background:linear-gradient(135deg,#FF3D9A,#EC2D8F); color:#fff; padding:16px; border-radius:999px; font-weight:800; font-size:16px; margin-top:8px; box-shadow:0 10px 26px rgba(236,45,143,0.5); border:0; width:100%; cursor:pointer;';
     const sendBtnStyle = canSend ? sendBtnBase : sendBtnBase + ' opacity:0.45; pointer-events:none; cursor:not-allowed;';
+    const sendBtnLabel = submitting ? 'Sending…' : 'Send Request · Message on Facebook';
 
-    const paymentLine = isGcash
-      ? `Payment: GCash\nGCash Ref #: ${form.gcashRef || '(see attached receipt)'}\n(Attaching my payment screenshot in this chat)`
-      : 'Payment: On-site (cash) at the hub';
-    const messageText = `Hi! I'd like to book ${isOpenPlay ? 'Open Play' : 'a court'} at South Coast Pickleball.\nName: ${form.name}\nPhone: ${form.phone}\nDate: ${form.date}\nTime: ${form.timeSlot}\n${isOpenPlay ? 'Players: ' + form.players : 'Hours: ' + form.hours}\nEstimated total: ₱${total}\n${paymentLine}`;
+    const courtBtnBase = 'flex:1; padding:12px 10px; border-radius:12px; font-weight:700; font-size:13px; border:2px solid transparent; cursor:pointer;';
+    const court1Available = form.date && !availabilityLoading ? this.isCourtAvailable(1) : false;
+    const court2Available = form.date && !availabilityLoading ? this.isCourtAvailable(2) : false;
+    const courtLabelFor = (available) => {
+      if (!form.date) return 'pick a date';
+      if (availabilityLoading) return 'checking…';
+      return available ? 'Available' : 'Booked';
+    };
+    const courtStyleFor = (available, selected) => {
+      if (!form.date || availabilityLoading) return courtBtnBase + 'background:rgba(255,255,255,0.05); color:#8A6E9E; border-color:rgba(255,255,255,0.1);';
+      if (!available) return courtBtnBase + 'background:rgba(255,61,154,0.08); color:#B39BC8; border-color:rgba(255,61,154,0.25); text-decoration:line-through; cursor:not-allowed;';
+      if (selected) return courtBtnBase + 'background:linear-gradient(135deg,#FF3D9A,#EC2D8F); color:#fff;';
+      return courtBtnBase + 'background:rgba(198,214,0,0.1); color:#C6D600; border-color:rgba(198,214,0,0.5);';
+    };
+
+    const now = new Date();
+    const todayStr = toDateStr(now);
+    const maxDate = new Date(now);
+    maxDate.setDate(maxDate.getDate() + MAX_ADVANCE_DAYS);
+    const maxDateStr = toDateStr(maxDate);
 
     return {
       openPlayPrice, courtPrice, mapZoom,
       form, isOpenPlay, isCourt, total,
       isGcash, isOnsite, gcashNumber, gcashName,
-      receiptDataUrl, receiptName, receiptError, canSend, sendBtnStyle,
-      timeSlots: ['6:00 PM','7:00 PM','8:00 PM','9:00 PM','10:00 PM','11:00 PM'],
+      receiptDataUrl, receiptName, receiptError, canSend, sendBtnStyle, sendBtnLabel,
+      submitError, todayStr, maxDateStr,
+      court1Disabled: !form.date || availabilityLoading || !court1Available,
+      court2Disabled: !form.date || availabilityLoading || !court2Available,
+      court1Label: courtLabelFor(court1Available),
+      court2Label: courtLabelFor(court2Available),
+      court1Style: courtStyleFor(court1Available, court === 1),
+      court2Style: courtStyleFor(court2Available, court === 2),
+      timeSlots: TIME_SLOTS,
       partners: ['JOOLA', 'PADDLETEK', 'SELKIRK', 'FRANKLIN'],
       tabOpenPlayStyle: isOpenPlay ? tabActive : tabInactive,
       tabCourtStyle: isCourt ? tabActive : tabInactive,
       tabPayOnsiteStyle: isOnsite ? tabActive : tabInactive,
       tabPayGcashStyle: isGcash ? tabActive : tabInactive,
       inputStyle,
-      setTypeOpenPlay: () => this.setState({ bookingType: 'openplay' }),
-      setTypeCourt: () => this.setState({ bookingType: 'court' }),
+      setTypeOpenPlay: () => this.setState({ bookingType: 'openplay', court: null, submitError: '' }),
+      setTypeCourt: () => this.setState({ bookingType: 'court', submitError: '' }),
       onPayOnsite: () => this.setState({ paymentMethod: 'onsite' }),
       onPayGcash: () => this.setState({ paymentMethod: 'gcash' }),
       onName: e => this.setField('name', e.target.value),
       onPhone: e => this.setField('phone', e.target.value),
-      onDate: e => this.setField('date', e.target.value),
+      onDate: e => this.onDate(e.target.value),
       onTimeSlot: e => this.setField('timeSlot', e.target.value),
       onHours: e => this.setField('hours', e.target.value),
       onPlayers: e => this.setField('players', e.target.value),
       onGcashRef: e => this.setField('gcashRef', e.target.value),
       onReceiptChange: e => this.onReceiptChange(e),
       onClearReceipt: () => this.clearReceipt(),
-      facebookMessageHref: 'https://m.me/SouthCoastPickleballLeisureHub?text=' + encodeURIComponent(messageText)
+      onSelectCourt1: () => this.selectCourt(1),
+      onSelectCourt2: () => this.selectCourt(2),
+      onSendRequest: () => this.onSendRequest()
     };
   }
 }

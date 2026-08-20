@@ -1,0 +1,8 @@
+name = "southcoastpickleball-api"
+main = "src/index.js"
+compatibility_date = "2026-08-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "southcoastpickleball-db"
+database_id = "4ec2ede8-ecae-4633-8d06-8f5596af1e8d"
