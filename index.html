@@ -23,6 +23,20 @@
     body { margin: 0; }
     a { color: #FF3D9A; text-decoration: none; }
     a:hover { color: #ffffff; }
+    .partner-chip {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 16px 26px; border-radius: 18px; background: #F5EEFB;
+      border: 2px solid transparent; box-sizing: border-box;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .partner-chip:hover {
+      transform: translateY(-5px) scale(1.06);
+      box-shadow: 0 14px 28px rgba(236,45,143,0.28);
+      border-color: #FF3D9A;
+      background: #ffffff;
+    }
+    .partner-chip img { height: 32px; width: auto; max-width: 130px; object-fit: contain; display: block; }
+    .partner-chip.is-wika img { height: 44px; border-radius: 8px; }
   </style>
 </helmet>
 
@@ -231,8 +245,10 @@
     <div style="max-width:1100px; margin:0 auto; text-align:center;">
       <div style="color:#8A5FA8; font-weight:700; font-size:13px; letter-spacing:3px; text-transform:uppercase; margin-bottom:28px;">Courtside Partner Brands</div>
       <div style="display:flex; flex-wrap:wrap; gap:20px; justify-content:center; align-items:center;">
-        <sc-for list="{{ partners }}" as="p" hint-placeholder-count="4">
-          <div style="padding:16px 32px; border-radius:14px; background:#F5EEFB; color:#4A1B6D; font-family:'Poppins',sans-serif; font-weight:800; font-size:20px; letter-spacing:0.5px;">{{ p }}</div>
+        <sc-for list="{{ partners }}" as="p" hint-placeholder-count="5">
+          <a href="{{ p.url }}" target="_blank" rel="noopener" class="{{ p.chipClass }}" aria-label="{{ p.name }}">
+            <img src="{{ p.logo }}" alt="{{ p.name }}" />
+          </a>
         </sc-for>
       </div>
     </div>
@@ -481,7 +497,13 @@ class Component extends DCLogic {
       court1Style: courtStyleFor(court1Available, court === 1),
       court2Style: courtStyleFor(court2Available, court === 2),
       timeSlots: TIME_SLOTS,
-      partners: ['JOOLA', 'PADDLETEK', 'SELKIRK', 'FRANKLIN'],
+      partners: [
+        { name: 'JOOLA', url: 'https://www.joola.com', logo: './partner-joola.webp', chipClass: 'partner-chip' },
+        { name: 'Selkirk', url: 'https://www.selkirk.com', logo: './partner-selkirk.webp', chipClass: 'partner-chip' },
+        { name: 'Wika Sports', url: 'https://wikasports.com', logo: './partner-wika.webp', chipClass: 'partner-chip is-wika' },
+        { name: 'Kamito', url: 'https://kamito.vn', logo: './partner-kamito.webp', chipClass: 'partner-chip' },
+        { name: 'Franklin', url: 'https://www.franklinsports.com', logo: './partner-franklin.webp', chipClass: 'partner-chip' },
+      ],
       tabOpenPlayStyle: isOpenPlay ? tabActive : tabInactive,
       tabCourtStyle: isCourt ? tabActive : tabInactive,
       tabPayOnsiteStyle: isOnsite ? tabActive : tabInactive,
