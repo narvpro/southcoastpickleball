@@ -11,11 +11,13 @@
 <helmet>
   <title>South Coast Pickleball Leisure Hub — Open Play in Santa Maria, Davao Occidental</title>
   <meta name="description" content="Book open play or court rental at South Coast Pickleball Leisure Hub, Poblacion, Santa Maria, Davao Occidental. Open Play ₱100, Court Booking ₱250/hr, 6PM–12AM." />
+  <link rel="icon" type="image/png" href="./favicon.png" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&family=Dancing+Script:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="./image-slot.js"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"SportsActivityLocation","name":"South Coast Pickleball Leisure Hub","address":{"@type":"PostalAddress","streetAddress":"Jassie Street, Poblacion","addressLocality":"Santa Maria","addressRegion":"Davao Occidental","addressCountry":"PH"},"geo":{"@type":"GeoCoordinates","latitude":6.560570,"longitude":125.4716},"telephone":"+639094716666","openingHours":"Mo-Su 18:00-24:00","priceRange":"₱100-₱250"}
+  {"@context":"https://schema.org","@type":"SportsActivityLocation","name":"South Coast Pickleball Leisure Hub","image":"https://southcoastpickleball.pages.dev/logo-full.webp","logo":"https://southcoastpickleball.pages.dev/logo-full.webp","address":{"@type":"PostalAddress","streetAddress":"Jassie Street, Poblacion","addressLocality":"Santa Maria","addressRegion":"Davao Occidental","addressCountry":"PH"},"geo":{"@type":"GeoCoordinates","latitude":6.560570,"longitude":125.4716},"telephone":"+639094716666","openingHours":"Mo-Su 18:00-24:00","priceRange":"₱100-₱250"}
   </script>
   <style>
     body { margin: 0; }
@@ -28,9 +30,12 @@
 
   <!-- NAV -->
   <div style="position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; padding:16px 32px; background:rgba(61,21,84,0.85); backdrop-filter:blur(10px); border-bottom:1px solid rgba(255,255,255,0.08);">
-    <div style="display:flex; flex-direction:column; line-height:1;">
-      <div style="font-family:'Dancing Script',cursive; font-size:24px; font-weight:700; color:#fff;">South Coast</div>
-      <div style="font-family:'Poppins',sans-serif; font-weight:800; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:#FF7FC0; margin-top:2px; white-space:nowrap;">Pickleball Leisure Hub</div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <img src="./logo-icon.webp" alt="South Coast Pickleball Leisure Hub" style="height:38px; width:auto; display:block;" />
+      <div style="display:flex; flex-direction:column; line-height:1;">
+        <div style="font-family:'Dancing Script',cursive; font-size:24px; font-weight:700; color:#fff;">South Coast</div>
+        <div style="font-family:'Poppins',sans-serif; font-weight:800; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:#FF7FC0; margin-top:2px; white-space:nowrap;">Pickleball Leisure Hub</div>
+      </div>
     </div>
     <div style="display:flex; align-items:center; gap:28px;" data-nav-links>
       <a href="#booking" style="font-size:14px; font-weight:600; color:#EADDF5;">Booking</a>
@@ -253,12 +258,15 @@
   <div id="contact" style="background:#2C0F41; padding:56px 32px 32px;">
     <div style="max-width:1100px; margin:0 auto; display:flex; flex-wrap:wrap; justify-content:space-between; gap:32px;">
       <div>
-        <div style="font-family:'Dancing Script',cursive; font-size:28px; margin-bottom:10px;">South Coast Pickleball</div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <img src="./logo-icon.webp" alt="South Coast Pickleball Leisure Hub" style="height:32px; width:auto; display:block;" />
+          <div style="font-family:'Dancing Script',cursive; font-size:28px;">South Coast Pickleball</div>
+        </div>
         <div style="color:#B39BC8; font-size:14px; line-height:1.7;">Poblacion, Santa Maria, Davao Occidental<br/>Jassie Street, Philippines</div>
       </div>
       <div style="display:flex; flex-direction:column; gap:8px;">
         <a href="tel:+639094716666" style="color:#EADDF5; font-size:14px; font-weight:600;">📞 0909 471 6666</a>
-        <a href="https://facebook.com/SouthCoastPickleballLeisureHub" target="_blank" style="color:#EADDF5; font-size:14px; font-weight:600;">facebook.com/SouthCoastPickleballLeisureHub</a>
+        <a href="https://www.facebook.com/profile.php?id=61592627883982" target="_blank" style="color:#EADDF5; font-size:14px; font-weight:600;">Message us on Facebook</a>
         <div style="color:#B39BC8; font-size:14px;">Open Play daily · 6 PM – 12 AM</div>
       </div>
     </div>
@@ -399,7 +407,7 @@ class Component extends DCLogic {
         ? `Payment: GCash\nGCash Ref #: ${form.gcashRef || '(see attached receipt)'}\n(Attaching my payment screenshot in this chat)`
         : 'Payment: On-site (cash) at the hub';
       const messageText = `Hi! I'd like to book ${isOpenPlay ? 'Open Play' : 'a court'} at South Coast Pickleball.\nName: ${form.name}\nPhone: ${form.phone}\nDate: ${form.date}\nTime: ${form.timeSlot}\n${courtLine}${isOpenPlay ? 'Players: ' + form.players : 'Hours: ' + hours}\nEstimated total: ₱${total}\n${paymentLine}`;
-      const fbHref = 'https://m.me/SouthCoastPickleballLeisureHub?text=' + encodeURIComponent(messageText);
+      const fbHref = 'https://m.me/61592627883982?text=' + encodeURIComponent(messageText);
       if (fbWindow) fbWindow.location.href = fbHref;
       else window.open(fbHref, '_blank');
 
