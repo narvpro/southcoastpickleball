@@ -43,6 +43,9 @@
   }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  @media (max-width: 480px) {
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+  }
   .row { display: flex; flex-direction: column; gap: 14px; }
   .err { color: #FF7FC0; font-size: 13px; margin-top: 10px; }
   .ok { color: #C6D600; font-size: 13px; margin-top: 10px; }
