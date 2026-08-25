@@ -37,6 +37,25 @@
     }
     .partner-chip img { height: 32px; width: auto; max-width: 130px; object-fit: contain; display: block; }
     .partner-chip.is-wika img { height: 44px; border-radius: 8px; }
+
+    .nav-links-desktop { display: flex; }
+    .nav-hamburger {
+      display: none; background: none; border: 0; color: #fff; padding: 6px;
+      cursor: pointer; line-height: 0;
+    }
+    .nav-mobile-panel { display: flex; flex-direction: column; }
+    .nav-mobile-panel a {
+      padding: 14px 4px; font-size: 15px; font-weight: 600; color: #EADDF5;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-mobile-panel a:last-child { border-bottom: 0; }
+    @media (max-width: 760px) {
+      .nav-links-desktop { display: none !important; }
+      .nav-hamburger { display: inline-flex !important; align-items: center; justify-content: center; }
+    }
+    @media (max-width: 860px) {
+      .stack-mobile { grid-template-columns: 1fr !important; }
+    }
   </style>
 </helmet>
 
@@ -53,25 +72,44 @@
         <div style="font-family:'Poppins',sans-serif; font-weight:800; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:#FF7FC0; margin-top:2px; white-space:nowrap;">Pickleball Leisure Hub</div>
       </div>
     </div>
-    <div style="display:flex; align-items:center; gap:28px;" data-nav-links>
+    <div class="nav-links-desktop" style="align-items:center; gap:28px;" data-nav-links>
       <a href="#booking" style="font-size:14px; font-weight:600; color:#EADDF5;">Booking</a>
       <a href="#about" style="font-size:14px; font-weight:600; color:#EADDF5;">The Hub</a>
       <a href="#location" style="font-size:14px; font-weight:600; color:#EADDF5;">Location</a>
       <a href="#contact" style="font-size:14px; font-weight:600; color:#EADDF5;">Contact</a>
       <a href="#booking" style="background:linear-gradient(135deg,#FF3D9A,#EC2D8F); color:#fff; padding:10px 22px; border-radius:999px; font-weight:700; font-size:14px; box-shadow:0 6px 20px rgba(236,45,143,0.5);">Book Now</a>
     </div>
+    <button class="nav-hamburger" onClick="{{ onToggleMenu }}" aria-label="Toggle menu">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <sc-if value="{{ mobileMenuOpen }}" hint-placeholder-val="{{ false }}">
+          <path d="M6 6l12 12M18 6L6 18"/>
+        </sc-if>
+        <sc-if value="{{ isMenuClosed }}" hint-placeholder-val="{{ true }}">
+          <path d="M4 7h16M4 12h16M4 17h16"/>
+        </sc-if>
+      </svg>
+    </button>
   </div>
+  <sc-if value="{{ mobileMenuOpen }}" hint-placeholder-val="{{ false }}">
+    <div class="nav-mobile-panel" style="position:sticky; top:78px; z-index:49; padding:6px 32px 14px; background:rgba(61,21,84,0.98); backdrop-filter:blur(10px); border-bottom:1px solid rgba(255,255,255,0.08);">
+      <a href="#booking" onClick="{{ onCloseMenu }}">Booking</a>
+      <a href="#about" onClick="{{ onCloseMenu }}">The Hub</a>
+      <a href="#location" onClick="{{ onCloseMenu }}">Location</a>
+      <a href="#contact" onClick="{{ onCloseMenu }}">Contact</a>
+      <a href="#booking" onClick="{{ onCloseMenu }}" style="color:#FF7FC0; font-weight:700;">Book Now</a>
+    </div>
+  </sc-if>
 
   <!-- HERO -->
   <div style="position:relative; min-height:92vh; display:flex; align-items:center; background:linear-gradient(150deg,#3D1554 0%, #5B2A86 45%, #B4308F 100%);">
     <div style="position:absolute; inset:0; opacity:0.9;">
       <image-slot id="hero-bg" shape="rect" placeholder="Drop hero court photo (palms + purple court)" fit="cover" style="width:100%; height:100%; opacity:0.35;" src="https://images.unsplash.com/photo-1778180883807-19962eda4d99?fm=jpg&q=60&w=2400&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" credit="Photo by Brian Zajac on Unsplash" credit-href="https://unsplash.com/@brianzajac"></image-slot>
     </div>
-    <div style="position:relative; z-index:2; max-width:1200px; margin:0 auto; padding:80px 32px; display:grid; grid-template-columns:1.1fr 0.9fr; gap:48px; align-items:center; width:100%;">
+    <div class="stack-mobile" style="position:relative; z-index:2; max-width:1200px; margin:0 auto; padding:80px 32px; display:grid; grid-template-columns:1.1fr 0.9fr; gap:48px; align-items:center; width:100%;">
       <div>
-        <div style="font-family:'Dancing Script',cursive; font-size:64px; line-height:1; color:#fff; text-shadow:0 4px 24px rgba(0,0,0,0.35);">South Coast</div>
-        <div style="font-family:'Poppins',sans-serif; font-weight:900; font-size:64px; line-height:1.02; text-transform:uppercase; letter-spacing:1px; margin-top:6px;">Pickleball</div>
-        <div style="font-family:'Poppins',sans-serif; font-weight:800; font-size:26px; letter-spacing:6px; color:#FF7FC0; margin-top:6px;">LEISURE HUB</div>
+        <div style="font-family:'Dancing Script',cursive; font-size:clamp(34px,9vw,64px); line-height:1; color:#fff; text-shadow:0 4px 24px rgba(0,0,0,0.35);">South Coast</div>
+        <div style="font-family:'Poppins',sans-serif; font-weight:900; font-size:clamp(34px,9vw,64px); line-height:1.02; text-transform:uppercase; letter-spacing:1px; margin-top:6px;">Pickleball</div>
+        <div style="font-family:'Poppins',sans-serif; font-weight:800; font-size:clamp(15px,4vw,26px); letter-spacing:clamp(2px,1.2vw,6px); color:#FF7FC0; margin-top:6px;">LEISURE HUB</div>
         <div style="font-family:'Dancing Script',cursive; font-size:32px; color:#C6D600; margin-top:22px;">See you on the court!</div>
         <div style="display:flex; gap:16px; margin-top:36px; flex-wrap:wrap;">
           <a href="#booking" style="background:linear-gradient(135deg,#FF3D9A,#EC2D8F); color:#fff; padding:16px 32px; border-radius:999px; font-weight:800; font-size:16px; box-shadow:0 10px 30px rgba(236,45,143,0.55);">Book a Court</a>
@@ -111,11 +149,11 @@
   <!-- BOOKING -->
   <div id="booking" style="max-width:1100px; margin:0 auto; padding:100px 32px 80px;">
     <div style="text-align:center; margin-bottom:48px;">
-      <div style="font-family:'Poppins',sans-serif; font-weight:900; font-size:40px; text-transform:uppercase; letter-spacing:1px;">Book Your Slot</div>
+      <div style="font-family:'Poppins',sans-serif; font-weight:900; font-size:clamp(28px,6vw,40px); text-transform:uppercase; letter-spacing:1px;">Book Your Slot</div>
       <div style="color:#D8BFE8; font-size:17px; margin-top:10px;">Manual booking or online booking — pick what works for you.</div>
     </div>
 
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start;">
+    <div class="stack-mobile" style="display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start;">
       <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:24px; padding:32px;">
         <div style="display:flex; gap:10px; margin-bottom:24px;">
           <button onClick="{{ setTypeOpenPlay }}" style="{{ tabOpenPlayStyle }}">Open Play · ₱{{ openPlayPrice }}/player</button>
@@ -227,13 +265,13 @@
   </div>
 
   <!-- ABOUT -->
-  <div id="about" style="max-width:1100px; margin:0 auto; padding:60px 32px 100px; display:grid; grid-template-columns:0.9fr 1.1fr; gap:56px; align-items:center;">
+  <div id="about" class="stack-mobile" style="max-width:1100px; margin:0 auto; padding:60px 32px 100px; display:grid; grid-template-columns:0.9fr 1.1fr; gap:56px; align-items:center;">
     <div style="position:relative; aspect-ratio:1/1; border-radius:24px; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.35);">
       <image-slot id="about-photo" shape="rect" placeholder="Drop a photo of the purple/lilac court" fit="cover" style="width:100%; height:100%;" src="https://images.unsplash.com/photo-1693142518820-78d7a05f1546?fm=jpg&q=60&w=2400&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" credit="Photo by Alex Saks on Unsplash" credit-href="https://unsplash.com/@alexsaks"></image-slot>
       <div style="position:absolute; inset:0; background:linear-gradient(150deg,rgba(91,42,134,0.55),rgba(255,61,154,0.35)); mix-blend-mode:color; pointer-events:none;"></div>
     </div>
     <div>
-      <div style="font-family:'Poppins',sans-serif; font-weight:900; font-size:34px; text-transform:uppercase; letter-spacing:0.5px;">The Hub</div>
+      <div style="font-family:'Poppins',sans-serif; font-weight:900; font-size:clamp(26px,5vw,34px); text-transform:uppercase; letter-spacing:0.5px;">The Hub</div>
       <div style="color:#EADDF5; font-size:17px; line-height:1.8; margin-top:16px;">
         Tucked along Jassie Street in Poblacion, Santa Maria — the road going to Boracay — South Coast Pickleball Leisure Hub turned a former banana chips warehouse into the region's liveliest court. Palms sway courtside, the surface runs purple-to-lilac under the lights, and open play runs every night from 6 PM to midnight. Energetic, tropical, and welcoming: beach-leisure meets serious play.
       </div>
@@ -256,9 +294,9 @@
 
   <!-- LOCATION -->
   <div id="location" style="background:linear-gradient(150deg,#3D1554,#5B2A86); padding:90px 32px;">
-    <div style="max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center;">
+    <div class="stack-mobile" style="max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center;">
       <div>
-        <div style="font-family:'Poppins',sans-serif; font-weight:900; font-size:34px; text-transform:uppercase; letter-spacing:0.5px;">Find Us</div>
+        <div style="font-family:'Poppins',sans-serif; font-weight:900; font-size:clamp(26px,5vw,34px); text-transform:uppercase; letter-spacing:0.5px;">Find Us</div>
         <div style="color:#EADDF5; font-size:17px; line-height:1.8; margin-top:16px;">
           Poblacion, Santa Maria, Davao Occidental<br/>
           Jassie Street — along the street going to Boracay<br/>
@@ -322,7 +360,8 @@ class Component extends DCLogic {
     availability: null,
     availabilityLoading: false,
     submitting: false,
-    submitError: ''
+    submitError: '',
+    mobileMenuOpen: false
   };
 
   setField(key, value) {
@@ -443,7 +482,7 @@ class Component extends DCLogic {
     const openPlayPrice = this.props.openPlayPrice ?? 100;
     const courtPrice = this.props.courtPrice ?? 250;
     const mapZoom = this.props.mapZoom ?? 15;
-    const { bookingType, paymentMethod, form, receiptDataUrl, receiptName, receiptError, court, availabilityLoading, submitting, submitError } = this.state;
+    const { bookingType, paymentMethod, form, receiptDataUrl, receiptName, receiptError, court, availabilityLoading, submitting, submitError, mobileMenuOpen } = this.state;
     const isOpenPlay = bookingType === 'openplay';
     const isCourt = bookingType === 'court';
     const isGcash = paymentMethod === 'gcash';
@@ -524,7 +563,10 @@ class Component extends DCLogic {
       onClearReceipt: () => this.clearReceipt(),
       onSelectCourt1: () => this.selectCourt(1),
       onSelectCourt2: () => this.selectCourt(2),
-      onSendRequest: () => this.onSendRequest()
+      onSendRequest: () => this.onSendRequest(),
+      mobileMenuOpen, isMenuClosed: !mobileMenuOpen,
+      onToggleMenu: () => this.setState(s => ({ mobileMenuOpen: !s.mobileMenuOpen })),
+      onCloseMenu: () => this.setState({ mobileMenuOpen: false })
     };
   }
 }
